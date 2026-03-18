@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Claim Dive — Investigations Made Simple",
   description:
     "Claim Dive provides fast, defensible insurance investigations and litigation support for law firms and carriers.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

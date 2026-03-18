@@ -53,7 +53,7 @@ export default function Home() {
                 <a href="/#services">Accident Investigations</a>
               </div>
             </div>
-            <a href="/about" className="nav-item">
+            <a href="/about" className="nav-item nav-about">
               About
             </a>
             <a href="/contact" className="nav-item" style={{ textDecoration: "none" }}>
@@ -1319,8 +1319,14 @@ export default function Home() {
             align-items: flex-start;
             gap: 8px;
           }
+          .nav-about {
+            display: none;
+          }
+          .hero {
+            padding-top: 0;
+          }
           .hero-inner {
-            padding: 72px 20px 40px;
+            padding: 112px 20px 40px;
             grid-template-columns: 1fr;
             gap: 32px;
           }
