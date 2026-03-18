@@ -1320,10 +1320,12 @@ export default function Home() {
             gap: 8px;
           }
           .hero-inner {
-            padding: 80px 20px;
+            padding: 72px 20px 40px;
+            grid-template-columns: 1fr;
+            gap: 32px;
           }
           section {
-            padding: 72px 20px;
+            padding: 56px 20px;
           }
           .cta-band {
             padding: 56px 20px;
@@ -1338,6 +1340,18 @@ export default function Home() {
             display: none;
           }
           .footer-top {
+            grid-template-columns: 1fr;
+          }
+          /* Simplify mobile: hide some secondary visuals */
+          .hero-panel {
+            margin-top: 8px;
+          }
+          .hero-stats,
+          .trust-bar,
+          .why-visual {
+            display: none;
+          }
+          .services-grid {
             grid-template-columns: 1fr;
           }
         }
