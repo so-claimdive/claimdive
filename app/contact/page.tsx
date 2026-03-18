@@ -6,16 +6,21 @@ export default function ContactPage() {
   const [inquiryType, setInquiryType] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string>("");
 
   const handleInquiryChange = (value: string) => {
     setInquiryType(value);
     setErrors({});
     setSubmitted(false);
+    setSubmitError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     const newErrors: Record<string, boolean> = {};
+    setSubmitError("");
 
     if (!inquiryType) {
       newErrors.inquiry = true;
@@ -41,8 +46,53 @@ export default function ContactPage() {
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length === 0) {
+    if (Object.keys(newErrors).length !== 0) return;
+
+    const getValue = (id: string) =>
+      (
+        document.getElementById(id) as
+          | HTMLInputElement
+          | HTMLTextAreaElement
+          | HTMLSelectElement
+          | null
+      )?.value ?? "";
+
+    const payload =
+      inquiryType === "order"
+        ? {
+            inquiry: inquiryType,
+            name: getValue("ord_name"),
+            email: getValue("ord_email"),
+            service_type: getValue("service_type"),
+            bar_number: getValue("bar_number"),
+            request_info: getValue("request_info"),
+            certify: (document.getElementById("certify") as HTMLInputElement | null)?.checked ?? false,
+          }
+        : {
+            inquiry: inquiryType,
+            name: getValue("name"),
+            email: getValue("email"),
+            message: getValue("message"),
+          };
+
+    try {
+      setSubmitting(true);
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        setSubmitError("Something went wrong sending your message. Please try again.");
+        return;
+      }
+
       setSubmitted(true);
+    } catch {
+      setSubmitError("Something went wrong sending your message. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -311,7 +361,11 @@ export default function ContactPage() {
 
                 {inquiryType && (
                   <button type="submit" className="submit-btn" id="submitBtn">
-                    {inquiryType === "order" ? "Submit Order Request" : "Send Message"}
+                    {submitting
+                      ? "Sending…"
+                      : inquiryType === "order"
+                        ? "Submit Order Request"
+                        : "Send Message"}
                     <svg
                       width="18"
                       height="18"
@@ -326,6 +380,12 @@ export default function ContactPage() {
                       <polygon points="22 2 15 22 11 13 2 9 22 2" />
                     </svg>
                   </button>
+                )}
+
+                {submitError && (
+                  <div style={{ marginTop: 14, color: "#e53e3e", fontSize: 14, lineHeight: 1.4 }}>
+                    {submitError}
+                  </div>
                 )}
               </form>
             </>
